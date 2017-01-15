@@ -1,11 +1,10 @@
 
 <?php
 include('main.php');
- 
 ?>
 <html>
 <head>
-<title>Consumers | EBA</title>
+<title>Line Man | EBA</title>
 <link rel="stylesheet" href="stylew3.css">
 <style>
     body {font-family: "Raleway", Arial, sans-serif;
@@ -109,80 +108,37 @@ div.dhtmlx_window_active, div.dhx_modal_cover_dv {
 </head>
 <body>
     <div style="text-align:center;color:#FFFFFF;text-shadow: 0px 0px 6px #000000;font-size:45px;">
-        Consumers
+        Line Man Details
     </div>
     
     <div class="datagrid">
-        <form action="verification.php" method="post"> 
+        <form action="" method="post"> 
             <table>
-                
+            <thead><tr><th>Employee Number</th><th> Name</th><th>Section</th><th>Password</th></tr></thead>
+<tbody>
          <?php
 extract($_POST);
 $connection1 = mysql_connect("localhost", "root", "nbuser");
 $db1 = mysql_select_db("eba", $connection1);
-
-//field and sort
-$field='name';
-$sort='ASC';
-if(isset($_GET['sorting']))
-{
-  if($_GET['sorting']=='ASC')
-  {
-  $sort='DESC';
-  }
-  else
-  {
-    $sort='ASC';
-  }
-}
-
-if(!empty($_GET['field'])){
-if($_GET['field']=='serialno')
-{
-   $field = "serialno"; 
-}
-elseif($_GET['field']=='name')
-{
-   $field = "name";
-}
-elseif($_GET['field']=='phone')
-{
-   $field="phone";
-}
-elseif($_GET['field']=='buildingname')
-{
-   $field="buildingname";
-}
-elseif($_GET['field']=='consumerno')
-{
-   $field="consumerno";
-}
-}
-
-
-
-
-$ses_sql1=mysql_query("SELECT * FROM `consumerdetails` ORDER BY $field $sort", $connection1);
-echo "<thead><tr><th><a href='consumers.php?sorting=$sort&field=serialno'>Serial No.</a></th><th> <a href='consumers.php?sorting=$sort&field=name'>Name</a></th><th><a href='consumers.php?sorting=$sort&field=phone'>Phone</a></th><th><a href='consumers.php?sorting=$sort&field=buildingname'>Name of Building</a></th><th><a href='consumers.php?sorting=$sort&field=consumerno'>Consumer No.</a></th></tr></thead>
-<tbody>";
-if($ses_sql1 != ''){
+$ses_sql1=mysql_query("SELECT * FROM `lineman` ", $connection1);
 $rows = mysql_num_rows($ses_sql1);
 $flag=1;
 if (mysql_num_rows($ses_sql1) > 0) {
 while($row = mysql_fetch_assoc($ses_sql1)) {
         if($flag==1){
-        echo "<tr><td>{$row['serialno']}<td><a href='consumerdetailedview.php?serial={$row['serialno']}'>{$row['name']}</a></td></td><td>{$row['phone']}</td><td>{$row['buildingname']}</td><td>{$row['consumerno']}</td></tr>";
+      echo "<tr><td><form action='' method='post'
+          <label><input type='checkbox' name='check_list[]' value={$row['empno']}>{$row['empno']}</td></td><td>{$row['name']}</td><td>{$row['section']}</td><td>{$row['password']}</td></tr>";
          $flag=0;
        }
         else {
-      echo "<tr><td>{$row['serialno']}<td><a href='consumerdetailedview.php?serial={$row['serialno']}'>{$row['name']}</a></td></td><td>{$row['phone']}</td><td>{$row['buildingname']}</td><td>{$row['consumerno']}</td></tr>";
-               $flag=1;  
+      echo "<tr><td><form action='' method='post'
+          <label><input type='checkbox' name='check_list[]' value={$row['empno']}>{$row['empno']}</td></td><td>{$row['name']}</td><td>{$row['section']}</td><td>{$row['password']}</td></tr>";
+         $flag=1;  
         } 
 }
 }
-}
 else{
-    echo "<tr><td><div align=left style=color:red;>none</div></td></tr>\n";
+    echo "<tr><td><div align=left style=color:red;>None</div></td></tr>\n";
 }
 
 mysql_close($connection1); 
@@ -192,10 +148,49 @@ mysql_close($connection1);
 </tbody>
 </table>
 
+            <?php
+    
+    if(isset($_POST['deleteline'])){
+if(!empty($_POST['check_list'])) {
+// Counting number of checked checkboxes.
+$checked_count = count($_POST['check_list']);
+echo "Successfully deleted ".$checked_count." Lineman(s) <br/>";
+$connection1 = mysql_connect("localhost", "root", "nbuser");
+$db1 = mysql_select_db("eba", $connection1);
+// Loop to store and display values of individual checked checkbox.
+foreach($_POST['check_list'] as $selected) {
+    $ses_sql=mysql_query("SELECT * FROM  `lineman` WHERE  `empno` =$selected", $connection1);
+    $row = mysql_fetch_assoc($ses_sql);
+    $error=$selected;
+    $ses_sq3=mysql_query("DELETE FROM `lineman` WHERE `empno`=$selected", $connection1);
+ 
+    //DROP TABLE table_name
+    $connection5 = mysql_connect("localhost", "root", "nbuser");
+$db5 = mysql_select_db("lineman", $connection5);
+
+$querycreate=mysql_query("INSERT INTO `lineman`.`123` (`serialno`, `consumerno`, `complaint`, `status`, `transformer`, `postno`) VALUES (NULL, '5465', '', '', '', '');",$connection5);
+$querycreate=mysql_query("DROP TABLE L$selected",$connection5);
+mysql_close($connection5);
+    
+
+echo "<script>window.onload = function() {
+    if(!window.location.hash) {
+        window.location = window.location + '#loaded';
+        window.location.reload();
+    }
+}</script>";
+}
+}
+else{
+    phpAlert(   "Please select at least one lineman."   );
+}
+}
+
+?>
 </div>
-<?php
-echo "Orderd By:".$field.". Sorted:".$sort;
-?>    
+ <input type="submit" style="background-color: #008CBA; border: none; color: white; padding: 15px 32px; text-align: center; border-radius: 4px; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; text-shadow:0px 0px 4px black;cursor: pointer;" name="deleteline" Value="Delete"/>
+ 
+ 
 </body>
 </html>
 

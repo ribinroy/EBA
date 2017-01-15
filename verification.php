@@ -1,11 +1,10 @@
 
 <?php
 include('main.php');
- 
 ?>
 <html>
 <head>
-<title>Consumers | EBA</title>
+<title>Verifications | EBA</title>
 <link rel="stylesheet" href="stylew3.css">
 <style>
     body {font-family: "Raleway", Arial, sans-serif;
@@ -104,81 +103,40 @@ include('main.php');
     background-color:#00557F;
 }
 div.dhtmlx_window_active, div.dhx_modal_cover_dv { 
-    position: fixed !important; }
+    position: fixed !important; 
+    
+    
 </style>
 </head>
 <body>
     <div style="text-align:center;color:#FFFFFF;text-shadow: 0px 0px 6px #000000;font-size:45px;">
-        Consumers
+        Verifications
+        
     </div>
+    
     
     <div class="datagrid">
         <form action="verification.php" method="post"> 
             <table>
-                
+                <thead><tr><th> Serial No.</th><th>Name</th><th> Phone </th><th>Name of Building</th><th>Category</th><th>Status</th></tr></thead>
+<tbody>
          <?php
 extract($_POST);
 $connection1 = mysql_connect("localhost", "root", "nbuser");
 $db1 = mysql_select_db("eba", $connection1);
-
-//field and sort
-$field='name';
-$sort='ASC';
-if(isset($_GET['sorting']))
-{
-  if($_GET['sorting']=='ASC')
-  {
-  $sort='DESC';
-  }
-  else
-  {
-    $sort='ASC';
-  }
-}
-
-if(!empty($_GET['field'])){
-if($_GET['field']=='serialno')
-{
-   $field = "serialno"; 
-}
-elseif($_GET['field']=='name')
-{
-   $field = "name";
-}
-elseif($_GET['field']=='phone')
-{
-   $field="phone";
-}
-elseif($_GET['field']=='buildingname')
-{
-   $field="buildingname";
-}
-elseif($_GET['field']=='consumerno')
-{
-   $field="consumerno";
-}
-}
-
-
-
-
-$ses_sql1=mysql_query("SELECT * FROM `consumerdetails` ORDER BY $field $sort", $connection1);
-echo "<thead><tr><th><a href='consumers.php?sorting=$sort&field=serialno'>Serial No.</a></th><th> <a href='consumers.php?sorting=$sort&field=name'>Name</a></th><th><a href='consumers.php?sorting=$sort&field=phone'>Phone</a></th><th><a href='consumers.php?sorting=$sort&field=buildingname'>Name of Building</a></th><th><a href='consumers.php?sorting=$sort&field=consumerno'>Consumer No.</a></th></tr></thead>
-<tbody>";
-if($ses_sql1 != ''){
+$ses_sql1=mysql_query("SELECT * FROM `newconnection` WHERE  `Status` NOT LIKE  'Approved'", $connection1);
 $rows = mysql_num_rows($ses_sql1);
 $flag=1;
 if (mysql_num_rows($ses_sql1) > 0) {
 while($row = mysql_fetch_assoc($ses_sql1)) {
         if($flag==1){
-        echo "<tr><td>{$row['serialno']}<td><a href='consumerdetailedview.php?serial={$row['serialno']}'>{$row['name']}</a></td></td><td>{$row['phone']}</td><td>{$row['buildingname']}</td><td>{$row['consumerno']}</td></tr>";
+      echo "<tr><td>{$row['serialno']}<td><a href='verifysingle.php?serial={$row['serialno']}'>{$row['name']}</a></td></td><td>{$row['phone']}</td><td>{$row['buildingname']}</td><td>{$row['category']}</td><td>{$row['Status']}</td></tr>";
          $flag=0;
        }
         else {
-      echo "<tr><td>{$row['serialno']}<td><a href='consumerdetailedview.php?serial={$row['serialno']}'>{$row['name']}</a></td></td><td>{$row['phone']}</td><td>{$row['buildingname']}</td><td>{$row['consumerno']}</td></tr>";
-               $flag=1;  
+      echo "<tr><td>{$row['serialno']}<td><a href='verifysingle.php?serial={$row['serialno']}'>{$row['name']}</a></td></td><td>{$row['phone']}</td><td>{$row['buildingname']}</td><td>{$row['category']}</td><td>{$row['Status']}</td></tr>";
+           $flag=1;  
         } 
-}
 }
 }
 else{
@@ -193,9 +151,8 @@ mysql_close($connection1);
 </table>
 
 </div>
-<?php
-echo "Orderd By:".$field.". Sorted:".$sort;
-?>    
+    
+    </form>
 </body>
 </html>
 

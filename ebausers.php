@@ -109,7 +109,7 @@ div.dhtmlx_window_active, div.dhx_modal_cover_dv {
 </head>
 <body>
     <div style="text-align:center;color:#FFFFFF;text-shadow: 0px 0px 6px #000000;font-size:45px;">
-        Consumers
+        EBA Users
     </div>
     
     <div class="datagrid">
@@ -122,7 +122,7 @@ $connection1 = mysql_connect("localhost", "root", "nbuser");
 $db1 = mysql_select_db("eba", $connection1);
 
 //field and sort
-$field='name';
+$field='consumerno';
 $sort='ASC';
 if(isset($_GET['sorting']))
 {
@@ -135,50 +135,54 @@ if(isset($_GET['sorting']))
     $sort='ASC';
   }
 }
-
 if(!empty($_GET['field'])){
-if($_GET['field']=='serialno')
+if($_GET['field']=='consumerno')
 {
-   $field = "serialno"; 
+   $field = "consumerno"; 
 }
 elseif($_GET['field']=='name')
 {
    $field = "name";
 }
+elseif($_GET['field']=='address')
+{
+   $field="address";
+}
 elseif($_GET['field']=='phone')
 {
    $field="phone";
 }
-elseif($_GET['field']=='buildingname')
+elseif($_GET['field']=='category')
 {
-   $field="buildingname";
+   $field="category";
 }
-elseif($_GET['field']=='consumerno')
+elseif($_GET['field']=='password')
 {
-   $field="consumerno";
+   $field="password";
+}
+elseif($_GET['field']=='username')
+{
+   $field="username";
 }
 }
 
 
 
-
-$ses_sql1=mysql_query("SELECT * FROM `consumerdetails` ORDER BY $field $sort", $connection1);
-echo "<thead><tr><th><a href='consumers.php?sorting=$sort&field=serialno'>Serial No.</a></th><th> <a href='consumers.php?sorting=$sort&field=name'>Name</a></th><th><a href='consumers.php?sorting=$sort&field=phone'>Phone</a></th><th><a href='consumers.php?sorting=$sort&field=buildingname'>Name of Building</a></th><th><a href='consumers.php?sorting=$sort&field=consumerno'>Consumer No.</a></th></tr></thead>
+$ses_sql1=mysql_query("SELECT * FROM `customer` ORDER BY $field $sort", $connection1);
+echo "<thead><tr><th><a href='ebausers.php?sorting=$sort&field=name'>Name</a></th><th> <a href='ebausers.php?sorting=$sort&field=username'>Username</a></th><th><a href='ebausers.php?sorting=$sort&field=password'>Password</a></th><th><a href='ebausers.php?sorting=$sort&field=consumerno'>Consumer No.</a></th><th><a href='ebausers.php?sorting=$sort&field=address'>Address</a></th><th><a href='ebausers.php?sorting=$sort&field=phone'>Phone No.</a></th><th><a href='ebausers.php?sorting=$sort&field=category'>Category</a></th></tr></thead>
 <tbody>";
-if($ses_sql1 != ''){
 $rows = mysql_num_rows($ses_sql1);
 $flag=1;
 if (mysql_num_rows($ses_sql1) > 0) {
 while($row = mysql_fetch_assoc($ses_sql1)) {
         if($flag==1){
-        echo "<tr><td>{$row['serialno']}<td><a href='consumerdetailedview.php?serial={$row['serialno']}'>{$row['name']}</a></td></td><td>{$row['phone']}</td><td>{$row['buildingname']}</td><td>{$row['consumerno']}</td></tr>";
+      echo "<tr><td>{$row['name']}</td></td><td>{$row['username']}</td><td>{$row['password']}</td><td>{$row['consumerno']}</td><td>{$row['address']}</td><td>{$row['phone']}</td><td>{$row['category']}</td></tr>";
          $flag=0;
        }
         else {
-      echo "<tr><td>{$row['serialno']}<td><a href='consumerdetailedview.php?serial={$row['serialno']}'>{$row['name']}</a></td></td><td>{$row['phone']}</td><td>{$row['buildingname']}</td><td>{$row['consumerno']}</td></tr>";
-               $flag=1;  
+      echo "<tr><td>{$row['name']}</td></td><td>{$row['username']}</td><td>{$row['password']}</td><td>{$row['consumerno']}</td><td>{$row['address']}</td><td>{$row['phone']}</td><td>{$row['category']}</td></tr>";
+           $flag=1;  
         } 
-}
 }
 }
 else{
